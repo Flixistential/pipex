@@ -24,6 +24,11 @@ char	*truepath(char *cmd, char **env)
 	i = -1;
 	s_path = ft_split(pathfinder(env), ':');
 	s_cmd = ft_split(cmd, ' ');
+	if (access(s_cmd[0], F_OK | X_OK) == 0)
+	{
+		ft_free(s_path);
+		return (s_cmd[0]);
+	}
 	while (s_path[++i])
 	{
 		path = ft_strjoinslash(s_path[i], s_cmd[0]);
@@ -57,7 +62,7 @@ void	command(char *cmd, char **env)
 	execve(path, s_cmd, env);
 }
 
-void	child(char **av, int *pipe_fd, char **env)
+void	cmd_1(char **av, int *pipe_fd, char **env)
 {
 	int	fd;
 
@@ -74,12 +79,10 @@ void	child(char **av, int *pipe_fd, char **env)
 	command (av[2], env);
 }
 
-void	parent(char **av, int *pipe_fd, char **env)
+void	cmd_2(char **av, int *pipe_fd, char **env)
 {
 	int	fd;
-	int	status;
 
-	waitpid(-1, &status, 0);
 	fd = open(av[4], O_CREAT | O_RDWR | O_TRUNC, 0644);
 	if (fd < 0)
 	{
@@ -96,7 +99,9 @@ void	parent(char **av, int *pipe_fd, char **env)
 int	main(int ac, char **av, char **envp)
 {
 	int		fd[2];
-	pid_t	family;
+	int		status;
+	pid_t	child1;
+	pid_t	child2;
 
 	if (ac != 5)
 	{
@@ -105,12 +110,20 @@ int	main(int ac, char **av, char **envp)
 	}
 	if (pipe(fd) == -1)
 		exit (-1);
-	family = fork();
-	if (family < 0)
+	child1 = fork();
+	if (child1 < 0)
 		exit (-1);
-	if (!family)
-		child(av, fd, envp);
-	parent(av, fd, envp);
+	if (!child1)
+		cmd_1(av, fd, envp);
+	child2 = fork();
+	if (child1 < 0)
+		exit (-1);
+	if (!child2)
+		cmd_2(av, fd, envp);
+	close(fd[0]);
+	close(fd[1]);
+	waitpid(child1, &status, 0);
+	waitpid(child2, &status, 0);
 }
 
 /* 
@@ -120,6 +133,5 @@ int	main(int ac, char **av, char **envp)
     split sur la cmd sur les ' ' pour isoler la commande
     ajouter /cmd a tout les path possible 
     vérifier si on peut y acceder avec access donc si le path est valide
-
 */
 
