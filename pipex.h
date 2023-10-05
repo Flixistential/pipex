@@ -18,9 +18,24 @@
 # include <stdlib.h>
 # include <fcntl.h>
 # include <sys/types.h>
-# include <sys/wait.h>  
+# include <sys/wait.h> 
+# include <stdio.h>
 
 char	*ft_strjoinslash(char const *s1, char const *s2);
 char	*pathfinder(char **env);
+void	command(char *cmd, char **env);
+char	*truepath(char *cmd, char **env);
+
+typedef struct	s_pipex
+{
+	int		fdout;
+	int		fdin;
+	int		pid_i;
+	int		pipe_i;
+	int		cmd_i;
+	int		count_cmd;
+	int		**pipe;
+	pid_t	*childs;
+}			t_pipex;
 
 # endif

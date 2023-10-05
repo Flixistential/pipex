@@ -14,53 +14,6 @@
 #include <stdio.h>
 #include <unistd.h>
 
-char	*truepath(char *cmd, char **env)
-{
-	int		i;
-	char	**s_path;
-	char	**s_cmd;
-	char	*path;
-
-	i = -1;
-	s_path = ft_split(pathfinder(env), ':');
-	s_cmd = ft_split(cmd, ' ');
-	if (access(s_cmd[0], F_OK | X_OK) == 0)
-	{
-		ft_free(s_path);
-		return (s_cmd[0]);
-	}
-	while (s_path[++i])
-	{
-		path = ft_strjoinslash(s_path[i], s_cmd[0]);
-		if (access(path, F_OK | X_OK) == 0)
-		{
-			ft_free(s_cmd);
-			ft_free(s_path);
-			return (path);
-		}
-		free(path);
-	}
-	ft_free(s_path);
-	ft_free(s_cmd);
-	return (NULL);
-}
-
-void	command(char *cmd, char **env)
-{
-	char	*path;
-	char	**s_cmd;
-
-	s_cmd = ft_split(cmd, ' ');
-	path = truepath(cmd, env);
-	if (!path)
-	{
-		ft_putstr_fd("command not found :", 2);
-		ft_putendl_fd(cmd, 2);
-		ft_free(s_cmd);
-		exit(2);
-	}
-	execve(path, s_cmd, env);
-}
 
 void	cmd_1(char **av, int *pipe_fd, char **env)
 {
