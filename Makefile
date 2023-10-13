@@ -3,7 +3,9 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g
 
 bsrc =	pipex_bonus.c\
-		pipex_utils.c
+		pipex_utils.c\
+		pipex_bonus_utils.c\
+		pipex_bonus_cmd.c
 
 src =	pipex.c\
 		pipex_utils.c
@@ -45,3 +47,4 @@ re:fclean all
 #LEAK_KIND   := --show-leak-kinds=all
 #CHILDREN    := --trace-children=yes
 #FD_TRACK    := --track-fds=yes
+#			 := --track-origins=yes

@@ -12,6 +12,12 @@
 
 #include "pipex.h"
 
+void	free_cmdpath(char **s_path, char **s_cmd)
+{
+	ft_free(s_cmd);
+	ft_free(s_path);
+}
+
 char	*truepath(char *cmd, char **env)
 {
 	int		i;
@@ -32,14 +38,12 @@ char	*truepath(char *cmd, char **env)
 		path = ft_strjoinslash(s_path[i], s_cmd[0]);
 		if (access(path, F_OK | X_OK) == 0)
 		{
-			ft_free(s_cmd);
-			ft_free(s_path);
+			free_cmdpath(s_path, s_cmd);
 			return (path);
 		}
 		free(path);
 	}
-	ft_free(s_path);
-	ft_free(s_cmd);
+	free_cmdpath(s_path, s_cmd);
 	return (NULL);
 }
 
@@ -97,9 +101,9 @@ void	command(char *cmd, char **env)
 
 	s_cmd = ft_split(cmd, ' ');
 	path = truepath(cmd, env);
-	fprintf(stderr, "command :%s\n %s\n", cmd, path);
 	if (!path)
 	{
+		ft_putstr_fd("Command not found :", 2);
 		ft_putendl_fd(cmd, 2);
 		ft_free(s_cmd);
 		exit(2);

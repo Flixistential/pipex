@@ -21,12 +21,7 @@
 # include <sys/wait.h> 
 # include <stdio.h>
 
-char	*ft_strjoinslash(char const *s1, char const *s2);
-char	*pathfinder(char **env);
-void	command(char *cmd, char **env);
-char	*truepath(char *cmd, char **env);
-
-typedef struct	s_pipex
+typedef struct s_pipex
 {
 	int		fdout;
 	int		fdin;
@@ -38,4 +33,19 @@ typedef struct	s_pipex
 	pid_t	*childs;
 }			t_pipex;
 
-# endif
+char	*ft_strjoinslash(char const *s1, char const *s2);
+char	*pathfinder(char **env);
+void	command(char *cmd, char **env);
+char	*truepath(char *cmd, char **env);
+int		**make_pipes(int cmd);
+void	make_cmd(t_pipex *data, char **av, char **env);
+int		make_pid(int cmd, pid_t **pid);
+void	ft_closepipe(t_pipex *data);
+void	open_file(t_pipex *data, char **av);
+void	cmd_first(t_pipex *data, char **av, char **env);
+void	cmd_middle(t_pipex *data, char	**av, char **env);
+void	free_pp(t_pipex *data);
+void	bonus_command(t_pipex *data, char *cmd, char **env);
+void	ft_close(t_pipex *data);
+
+#endif
